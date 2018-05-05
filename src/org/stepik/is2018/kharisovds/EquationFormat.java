@@ -63,6 +63,10 @@ abstract class EquationFormat {
             }
             result = tmp;
         }
+        if (pow == 0) {
+            result.clear();
+            result.add(new Term());
+        }
         return new ComplexFactor(result);
     }
 

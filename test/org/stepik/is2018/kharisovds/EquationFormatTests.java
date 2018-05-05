@@ -120,5 +120,34 @@ class EquationFormatTests {
         }
     }
 
+    @Test //tricky tests gotten kindly given by Julia Zhuk
+    void trickyTest() {
+        try {
+            assertEquals("-2a", EquationFormat.canonicalForm(new StringReader("a(-2)")));
+            assertEquals("2a", EquationFormat.canonicalForm(new StringReader("a(-2)(-1)")));
+            assertEquals("4a", EquationFormat.canonicalForm(new StringReader("a(-2)^2")));
+            assertEquals("-4a", EquationFormat.canonicalForm(new StringReader("(-a)(-2)^2")));
+            assertEquals("-8a", EquationFormat.canonicalForm(new StringReader("a(-2)^3")));
+            assertEquals("a", EquationFormat.canonicalForm(new StringReader("a(-2)^0")));
+            assertEquals("1", EquationFormat.canonicalForm(new StringReader("(-2)^0")));
+            assertEquals("1", EquationFormat.canonicalForm(new StringReader("(a+b+d+c+t)^0")));
 
+            assertEquals("a^32", EquationFormat.canonicalForm(new StringReader("(((((a^2)^2)^2)^2)^2)")));
+            assertThrows(ExponentTooHighException.class, () -> EquationFormat.canonicalForm(new StringReader("a^16b^17")));
+            assertThrows(ExponentTooHighException.class, () -> EquationFormat.canonicalForm(new StringReader("aaaabbbbnnnnhhhhkkkkiiiiiiiiiiiiiii")));
+            assertThrows(ExponentTooHighException.class, () -> EquationFormat.canonicalForm(new StringReader("(a^14+c)(a^20+d)")));
+            assertThrows(ExponentTooHighException.class, () -> EquationFormat.canonicalForm(new StringReader("((a^2))^19")));
+            assertThrows(ExponentTooHighException.class, () -> EquationFormat.canonicalForm(new StringReader("(((((a^2)^2)^2)^2)^2)^2")));
+
+            assertEquals("ab", EquationFormat.canonicalForm(new StringReader("ba")));
+            assertEquals("abcdefghijklmnopqrstuvwxyz", EquationFormat.canonicalForm(new StringReader("zyxwvutsrqponmlkjihgfebcda")));
+            assertEquals("a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+u+v+w+x+y+z", EquationFormat.canonicalForm(new StringReader("z+y+x+w+v+u+t+s+r+q+p+o+n+m+l+k+j+i+h+g+f+e+b+c+d+a")));
+            assertEquals("a^5+a^4+a^3+a^2+a", EquationFormat.canonicalForm(new StringReader("a+aa+aaa+aaaa+aaaaa")));
+            assertEquals("a^15z+a^5f+a^4e+a^3d+a^2c+ab", EquationFormat.canonicalForm(new StringReader("ab+a^2c+a^3d+a^4e+a^5f+a^15z")));
+            assertEquals("a^11+z^32", EquationFormat.canonicalForm(new StringReader("z^32+a^11")));
+        } catch (Exception e) {
+            System.err.println("Exception in unexpected place during test execution");
+            e.printStackTrace();
+        }
+    }
 }
